@@ -2,6 +2,9 @@
 const {
   Model
 } = require('sequelize');
+const bcrypt = require('bcrypt');
+
+const { SAlT } = require('../config/serverConfig');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -32,6 +35,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+  });
+
+  //for encrypting the passsword..that means we can't store the raw password of the user..so we have to encrypt it
+  User.beforeCreate((user) => {
+    const encryptedPassword = bcrypt.hashSync(user.password,SALT);
+    user.password = encryptedPassword;
   });
   return User;
 };
