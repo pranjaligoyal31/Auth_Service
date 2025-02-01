@@ -1,8 +1,10 @@
 //in service layer ,we write business logic
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const UserRepository = require('../repository/user-repository');
 const { JWT_KEY } = require('../config/serverConfig');
+const e = require('express');
 
 class UserService {
     constructor() {
@@ -25,7 +27,7 @@ class UserService {
             return result;
         } catch (error) {
             console.log("something went wrong in token creation");
-            throw(error);
+            throw error;
         }
      }
 
@@ -35,7 +37,16 @@ class UserService {
             return response;
         } catch (error) {
             console.log("something went wrong in token validation",error);
-            throw(error);
+            throw error;
+        }
+     }
+
+     checkPassword(userInputPlainPassword, encryptedPassword) {
+        try {
+            return bcrypt.compareSync(userInputPlainPassword, encryptedPassword);
+        } catch (error) {
+            console.log("something went wrong in password comparison ");
+            throw error;
         }
      }
 }
